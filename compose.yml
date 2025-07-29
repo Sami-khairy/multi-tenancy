@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine          # version > 16 si vous préférez
+    container_name: t_enant-db
+    restart: unless-stopped
+
+    ports:
+      - "5432:5432"
+
+    environment:
+      # credentials & base
+      POSTGRES_USER: votre_utilisateur
+      POSTGRES_PASSWORD: votre_mot_de_passe
+      POSTGRES_DB: votre_base_de_donnees
+
+      # cohérence temporelle
+      TZ: "Africa/Casablanca"          # horloge du conteneur
+      PGTZ: "Africa/Casablanca"        # timezone par défaut côté SQL
+
+    volumes:
+      - db_data:/var/lib/postgresql/data          # persistance
+      - ./initdb:/docker-entrypoint-initdb.d      # scripts *.sql exécutés au 1ᵉʳ run
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  db_data:
