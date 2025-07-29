@@ -1,33 +1,47 @@
 version: "3.9"
 
 services:
+  # --- Service PostgreSQL (Pour votre application, mais plus pour Keycloak) ---
   db:
-    image: postgres:16-alpine          # version > 16 si vous préférez
+    image: postgres:16-alpine
     container_name: t_enant-db
     restart: unless-stopped
-
     ports:
       - "5432:5432"
-
     environment:
-      # credentials & base
+      # Identifiants et base de données pour votre application Spring Boot
       POSTGRES_USER: votre_utilisateur
       POSTGRES_PASSWORD: votre_mot_de_passe
       POSTGRES_DB: votre_base_de_donnees
-
-      # cohérence temporelle
-      TZ: "Africa/Casablanca"          # horloge du conteneur
-      PGTZ: "Africa/Casablanca"        # timezone par défaut côté SQL
-
     volumes:
-      - db_data:/var/lib/postgresql/data          # persistance
-      - ./initdb:/docker-entrypoint-initdb.d      # scripts *.sql exécutés au 1ᵉʳ run
-
+      - db_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       retries: 5
       start_period: 15s
 
+  # --- Service Keycloak (Configuré pour utiliser sa base de données interne H2) ---
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: t_enant-keycloak
+    restart: unless-stopped
+    ports:
+      # Le port 8081 de votre machine est mappé au port 8080 du conteneur
+      - "8081:8080"
+    environment:
+      # Identifiants pour l'administrateur Keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      # NOTE: Toutes les variables KC_DB_* ont été supprimées.
+      # Keycloak utilisera sa base de données H2 par défaut.
+
+    # --- COMMANDE DE DÉMARRAGE ---
+    # Cette ligne indique à Keycloak de démarrer en mode développement.
+    command:
+      - "start-dev"
+    # NOTE: La dépendance "depends_on" a été supprimée car Keycloak est maintenant indépendant.
+
 volumes:
   db_data:
+    driver: local
