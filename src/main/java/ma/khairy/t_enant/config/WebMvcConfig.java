@@ -4,7 +4,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
+//n'est plus utiliser puisqu'on a remplacé par un filtre TenantFilter
+//@Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final TenantInterceptor tenantInterceptor;

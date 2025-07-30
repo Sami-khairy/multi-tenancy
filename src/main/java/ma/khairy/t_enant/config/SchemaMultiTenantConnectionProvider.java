@@ -65,12 +65,12 @@ public class SchemaMultiTenantConnectionProvider implements MultiTenantConnectio
         return connection;
     }
 
-    // Le reste de la classe ne change pas...
     @Override
     public void releaseConnection(String tenantIdentifier, Connection connection) throws SQLException {
         log.info("Release connection for tenant {}", tenantIdentifier);
         try (Statement statement = connection.createStatement()) {
-            statement.execute(String.format("SET SCHEMA '%s'", TenantContext.DEFAULT_TENANT_ID));
+            // On retourne au schéma de réinitialisation pour nettoyer la connexion
+            statement.execute(String.format("SET SCHEMA '%s'", TenantContext.RESET_TENANT_ID));
         } catch (SQLException e) {
             log.error("Could not reset schema for connection of tenant {}", tenantIdentifier, e);
         } finally {

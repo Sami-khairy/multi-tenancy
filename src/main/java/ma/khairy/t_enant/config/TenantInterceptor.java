@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-@Component
+//n'est plus utiliser puisqu'on a remplacé par un filtre TenantFilter
+//@Component
 public class TenantInterceptor implements HandlerInterceptor {
 
     @Override
@@ -21,7 +22,7 @@ public class TenantInterceptor implements HandlerInterceptor {
             // return false;
 
             // Ou utiliser le tenant par défaut
-            TenantContext.setCurrentTenant(TenantContext.DEFAULT_TENANT_ID);
+            TenantContext.setCurrentTenant(TenantContext.RESET_TENANT_ID);
         }
         return true;
     }

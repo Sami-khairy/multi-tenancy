@@ -1,0 +1,2 @@
+INSERT INTO installed_module (module_name, active) VALUES ('core', true) ON CONFLICT (module_name) DO NOTHING;
+INSERT INTO installed_module (module_name, active) VALUES ('produit', false) ON CONFLICT (module_name) DO NOTHING;
