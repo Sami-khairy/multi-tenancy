@@ -36,7 +36,7 @@ public class SecurityConfig {
                                 .decoder(multiTenantJwtDecoder)
                         )
                 )
-                .addFilterBefore(tenantFilter, BearerTokenAuthenticationFilter.class);;
+                .addFilterBefore(tenantFilter, BearerTokenAuthenticationFilter.class);
 
         return http.build();
     }
